@@ -1,0 +1,55 @@
+# Exclude common OS files
+.DS_Store
+
+# Exclude common IDE project files
+.checkstyle
+.classpath
+.editorconfig
+.idea
+.project
+.settings
+.vscode/
+*.iml
+**/.vscode/*
+
+# Exclude .env files
+.env
+
+#  Local .terraform directories
+**/.terraform/*
+.terraform/
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# .tfvars files
+*.tfvars
+
+# Hashicorp Lock files
+*.lock.hcl
+
+# MS Office temporary files
+~$*
+
+# git files
+.gitattributes
+!.gitkeep
+!.gitignore
+
+# Installation artifacts
+*.egg-info
+build
+dist
+
+# Project files
+__pycache__
+.aws
+.coverage
+.flake8
+.ipynb_checkpoints
+.mypy_cache
+.pylintrc
+.pypirc
+.pytest_cache
+.venv
