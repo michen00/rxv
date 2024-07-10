@@ -32,7 +32,8 @@ import rxv
 url = "https://example.com"
 rxv.archive_with_internetarchive(url)
 rxv.archive_with_archivedottoday(url)
-rxv.archive_with("internetarchive", url)
+result = rxv.archive_with("internetarchive", url)
+print(result.response, result.archive_url)
 ```
 
 ## Setup

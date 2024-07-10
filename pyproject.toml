@@ -3,7 +3,13 @@ name = "rxv"
 version = "0.0.0"
 authors = [{ name = "Michael I Chen", email = "michael.chen.0@gmail.com" }]
 description = "A utility to archive URLs."
-dependencies = ["requests", "structlog", "typer", "waybackpy"]
+dependencies = [
+    "eprints2archives",
+    "requests",
+    "structlog",
+    "typer",
+    "waybackpy",
+]
 
 [project.optional-dependencies]
 dev = [
