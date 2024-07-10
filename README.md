@@ -6,8 +6,16 @@ A tool for sending URLs to online archives
 
 ## Currently supported (wip)
 
-- [Internet Archive](https://archive.org)
-- [archive.today](https://archive.today)
+| service                                 | parameter             |
+| :-------------------------------------- | :-------------------- |
+| [archive.today](https://archive.today)  | `"archive_dot_today"` |
+| [Internet Archive](https://archive.org) | `"internetarchive"`   |
+
+## Installation (not ready yet)
+
+```terminal
+python -m pip install rxv
+```
 
 ## Usage
 
