@@ -19,10 +19,9 @@ python -m pip install rxv
 
 ## Usage
 
-`rxv [options] <url>`
-
 ```terminal
 rxv https://example.com --archivetoday --internetarchive
+rxv https://example.com --at --it
 rxv http://example1.com http://example2.com
 echo https://example.com | rxv
 ```
