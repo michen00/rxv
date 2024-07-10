@@ -11,12 +11,6 @@ A tool for sending URLs to online archives
 | [archive.today](https://archive.today)  | `"archivetoday"`    |
 | [Internet Archive](https://archive.org) | `"internetarchive"` |
 
-## Installation
-
-```terminal
-python -m pip install rxv
-```
-
 ## Usage
 
 ```terminal
