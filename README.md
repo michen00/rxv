@@ -4,11 +4,11 @@ wip
 
 A tool for sending URLs to online archives
 
-## Currently supported (wip)
+## Currently supported
 
 | service                                 | parameter             |
 | :-------------------------------------- | :-------------------- |
-| [archive.today](https://archive.today)  | `"archive_dot_today"` |
+| [archive.today](https://archive.today)  | `"archivetoday"` |
 | [Internet Archive](https://archive.org) | `"internetarchive"`   |
 
 ## Installation (not ready yet)

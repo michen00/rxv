@@ -24,7 +24,7 @@ dev = [
 ]
 
 [project.scripts]
-rxv = "rxv.bin.archive_urls:main"
+rxv = "rxv.bin.rxv:rxv"
 
 [tool.mypy]
 exclude = "notebook/ | *.ipynb"

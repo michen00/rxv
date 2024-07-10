@@ -2,14 +2,17 @@
 
 __all__ = "archive_with", "archive_with_archivetoday", "archive_with_internetarchive"
 
+from enum import StrEnum, auto
 from secrets import token_hex
-from typing import Any, Literal, NamedTuple
+from typing import Any, NamedTuple
 
 import requests
 import structlog
 from eprints2archives.services import archivetoday as e2a
 from pydantic import AnyHttpUrl, validate_call
 from waybackpy import WaybackMachineSaveAPI
+
+logger = structlog.get_logger()
 
 
 class ArchiveToday(e2a.ArchiveToday):
@@ -72,9 +75,6 @@ class ArchiveToday(e2a.ArchiveToday):
         return None
 
 
-logger = structlog.get_logger()
-
-
 class ArchiveResponse(NamedTuple):
     """Response from an archive request."""
 
@@ -82,8 +82,15 @@ class ArchiveResponse(NamedTuple):
     archive_url: AnyHttpUrl | None = None
 
 
+class SupportedServices(StrEnum):
+    """Supported archive services."""
+
+    ARCHIVETODAY = auto()
+    INTERNETARCHIVE = auto()
+
+
 def archive_with(
-    service: Literal["archive_dot_today", "internetarchive"],
+    service: SupportedServices,
     url: AnyHttpUrl,
     *args: tuple[Any, ...],
     **kwargs: dict[str, Any],
@@ -103,9 +110,9 @@ def archive_with(
     """
     try:
         match service:
-            case "archive_dot_today":
+            case SupportedServices.ARCHIVETODAY:
                 return archive_with_archivetoday(url)
-            case "internetarchive":
+            case SupportedServices.INTERNETARCHIVE:
                 return archive_with_internetarchive(url)
     except Exception as e:
         logger.exception(
