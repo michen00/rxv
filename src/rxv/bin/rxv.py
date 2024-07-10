@@ -20,7 +20,8 @@ import structlog
 import typer
 from rxv.config import EXCLUDED_DOMAINS
 from rxv.core import SupportedServices, archive_with
-from typer import Option
+from tqdm.auto import tqdm
+from typer import Argument, Option
 
 structlog.configure(
     processors=[
@@ -47,17 +48,32 @@ def filter_urls(urls: Iterable[str]) -> list[str]:
 
 
 def main(
-    urls: list[str],
+    urls: Annotated[list[str], Argument(help="URLs to archive")],
     *,
     archivetoday: Annotated[
         bool,
-        Option(f"--{SupportedServices.ARCHIVETODAY}", "-at"),
+        Option(
+            f"--{SupportedServices.ARCHIVETODAY}",
+            "--at",
+            help="enable archive.today",
+        ),
     ] = False,
     internetarchive: Annotated[
         bool,
-        Option(f"--{SupportedServices.INTERNETARCHIVE}", "-ia"),
+        Option(
+            f"--{SupportedServices.INTERNETARCHIVE}",
+            "--ia",
+            help="enable Internet Archive Wayback Machine",
+        ),
     ] = False,
-    all_services: Annotated[bool, Option("--all", "-a")] = True,
+    all_services: Annotated[
+        bool,
+        Option("--all", "-a", help="enable all archival services"),
+    ] = False,
+    verbose: Annotated[
+        bool,
+        Option("--verbose", "-v", help="enable printing status messages to stdout"),
+    ] = True,
 ) -> None:
     """Provide the entry point for the CLI."""
     urls = filter_urls(urls)
@@ -76,17 +92,35 @@ def main(
         if not services:
             services = [*SupportedServices]
 
-    for url, service in product(urls, services):
-        response = archive_with(service, url)
-        if response is None:
-            logger.error("Failed to archive URL", url=url, service=service.name)
-        else:
-            logger.info(
-                "Archived URL",
-                url=url,
-                service=service.name,
-                archive_url=response.archive_url,
+    failure, success = "Failed to archive URL", "Archived URL"
+    if verbose:
+        for url, service in tqdm(product(urls, services), desc="Archiving URLs..."):
+            response = archive_with(service, url)
+            if failed := response is None:
+                logger.error(failure, url=url, service=service)
+            else:
+                logger.info(
+                    success,
+                    url=url,
+                    service=service,
+                    archive_url=response.archive_url,
+                )
+            print(
+                f"{failure if failed else success} ({service.name}): {url}"
+                f'{f" -> {response.archive_url}" if response else ""}',
             )
+    else:
+        for url, service in product(urls, services):
+            response = archive_with(service, url)
+            if response is None:
+                logger.error(failure, url=url, service=service)
+            else:
+                logger.info(
+                    success,
+                    url=url,
+                    service=service,
+                    archive_url=response.archive_url,
+                )
 
 
 def rxv() -> None:

@@ -7,6 +7,7 @@ dependencies = [
     "eprints2archives",
     "requests",
     "structlog",
+    "tqdm",
     "typer",
     "waybackpy",
 ]
