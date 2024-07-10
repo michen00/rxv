@@ -5,19 +5,21 @@ Example usage:
     $ rxv https://example.com
     $ rxv http://example1.com http://example2.org
     $ rxv https://example.com --all
-    $ rxv https://example.com --internetarchive --archivetoday
+    $ rxv https://example.com --archivetoday --internetarchive
+    $ echo https://example.com | rxv
 """
 
 __all__ = []
 
 import asyncio
-from collections.abc import Iterable
 from itertools import product
-from typing import Annotated
+from sys import stdin
+from typing import Annotated, Optional
 from urllib.parse import urlparse
 
 import structlog
 import typer
+from pydantic import AnyHttpUrl, ValidationError
 from rxv.config import EXCLUDED_DOMAINS
 from rxv.core import SupportedServices, archive_with
 from tqdm.auto import tqdm
@@ -35,20 +37,11 @@ structlog.configure(
 logger = structlog.get_logger()
 
 
-def filter_urls(urls: Iterable[str]) -> list[str]:
-    """Filter out URLs from the excluded domains.
-
-    Args:
-        urls: List of URLs to filter.
-
-    Returns:
-        Deduplicated URLs that are not in the excluded domains.
-    """
-    return [*{url for url in urls if urlparse(url).netloc not in EXCLUDED_DOMAINS}]
-
-
 def main(
-    urls: Annotated[list[str], Argument(help="URLs to archive")],
+    urls: Annotated[
+        Optional[list[str]],  # noqa: UP007
+        Argument(help="URLs to archive. If empty, reads from stdin."),
+    ] = None,
     *,
     archivetoday: Annotated[
         bool,
@@ -72,14 +65,35 @@ def main(
     ] = False,
     verbose: Annotated[
         bool,
-        Option("--verbose", "-v", help="enable printing status messages to stdout"),
+        Option("--verbose", "-v", help="enable verbose logging"),
     ] = True,
 ) -> None:
     """Provide the entry point for the CLI."""
-    urls = filter_urls(urls)
     if not urls:
-        logger.error("No valid URLs to archive")
-        raise typer.Exit(code=1)
+        urls = {_url for url in stdin.readlines() if (_url := url.strip())}
+    if not urls:
+        msg = "No URLs provided."
+        logger.error(msg)
+        typer.echo(msg)
+        raise typer.Exit(1)
+
+    _urls = set()
+    include_url = _urls.add
+    for url in urls:
+        if urlparse(url).netloc in EXCLUDED_DOMAINS:
+            logger.warning("Excluded URL by domain", url=url)
+            continue
+        try:
+            AnyHttpUrl(url)
+        except ValidationError as e:
+            logger.warning("Invalid URL", url=url, exc_info=e)
+            continue
+        include_url(url)
+    urls = _urls
+
+    if not urls:
+        logger.info("No valid URLs to archive")
+        raise typer.Exit(0)
 
     services = []
     if all_services:
@@ -95,8 +109,9 @@ def main(
     failure, success = "Failed to archive URL", "Archived URL"
     if verbose:
         for url, service in tqdm(product(urls, services), desc="Archiving URLs..."):
+            typer.echo(f"Archiving {url} with {service}")
             response = archive_with(service, url)
-            if failed := response is None:
+            if failed := (response is None):
                 logger.error(failure, url=url, service=service)
             else:
                 logger.info(
@@ -104,23 +119,25 @@ def main(
                     url=url,
                     service=service,
                     archive_url=response.archive_url,
+                    response=response.response,
                 )
-            print(
+            print(  # noqa: T201
                 f"{failure if failed else success} ({service.name}): {url}"
                 f'{f" -> {response.archive_url}" if response else ""}',
             )
-    else:
+    else:  # this should be roughly equivalent to the verbose block
+        log_error, log_info = logger.error, logger.info
         for url, service in product(urls, services):
-            response = archive_with(service, url)
-            if response is None:
-                logger.error(failure, url=url, service=service)
-            else:
-                logger.info(
-                    success,
-                    url=url,
-                    service=service,
-                    archive_url=response.archive_url,
-                )
+            log_error(
+                failure,
+                url=url,
+                service=service,
+            ) if (response := archive_with(service, url)) is None else log_info(
+                success,
+                url=url,
+                service=service,
+                archive_url=response.archive_url,
+            )
 
 
 def rxv() -> None:

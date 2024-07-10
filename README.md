@@ -22,8 +22,9 @@ python -m pip install rxv
 `rxv [options] <url>`
 
 ```terminal
-rxv https://example.com
+rxv https://example.com --archivetoday --internetarchive
 rxv http://example1.com http://example2.com
+echo https://example.com | rxv
 ```
 
 ```python
@@ -46,6 +47,8 @@ print(result.response, result.archive_url)
 
 ## TODO
 
+- idempotency
+- concurrency
 - improve implementations (e2a for internetarchive?)
 - add tests
 - add more archival services

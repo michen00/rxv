@@ -52,14 +52,14 @@ class ArchiveToday(e2a.ArchiveToday):
             # and instead throws code 503. See author's posting of 2020-08-04:
             # https://blog.archive.today/post/625519838592417792
             if isinstance(error, e2a.ServiceFailure):
-                e2a.wait(e2a._RATE_LIMIT_SLEEP)
+                e2a.wait(e2a._RATE_LIMIT_SLEEP)  # noqa: SLF001
                 return self.save(url, retry)
 
             # Our underlying net(...) function will retry automatically for
             # some recognizable temporary problems. Others, we handle here.
             retry += 1
-            if e2a._MAX_RETRIES - retry > 0:
-                e2a.wait(e2a._RETRY_SLEEP * pow(retry, 2))
+            if e2a._MAX_RETRIES - retry > 0:  # noqa: SLF001
+                e2a.wait(e2a._RETRY_SLEEP * pow(retry, 2))  # noqa: SLF001
                 return self.save(url, retry)
             raise error
 
