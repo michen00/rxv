@@ -6,10 +6,10 @@ A tool for sending URLs to online archives
 
 ## Currently supported
 
-| service                                 | parameter             |
-| :-------------------------------------- | :-------------------- |
-| [archive.today](https://archive.today)  | `"archivetoday"` |
-| [Internet Archive](https://archive.org) | `"internetarchive"`   |
+| service                                 | parameter           |
+| :-------------------------------------- | :------------------ |
+| [archive.today](https://archive.today)  | `"archivetoday"`    |
+| [Internet Archive](https://archive.org) | `"internetarchive"` |
 
 ## Installation (not ready yet)
 
@@ -46,7 +46,6 @@ print(result.response, result.archive_url)
 
 ## TODO
 
-- finish implementations
-- improve options for toggling archival services
+- improve implementations (e2a for internetarchive?)
 - add tests
 - add more archival services
