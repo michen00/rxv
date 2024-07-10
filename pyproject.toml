@@ -28,6 +28,9 @@ dev = [
 [project.scripts]
 rxv = "rxv.bin.rxv:rxv"
 
+[project.urls]
+Homepage = "https://github.com/michen00/rxv"
+
 [tool.mypy]
 exclude = "notebook/ | *.ipynb"
 packages = ["rxv"]
