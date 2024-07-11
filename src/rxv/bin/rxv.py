@@ -116,7 +116,7 @@ def main(
     if verbose:
         for url, service in tqdm(product(urls, services), desc="Archiving URLs..."):
             typer.echo(f"Archiving {url} with {service}")
-            response = archive_with(service, url)
+            response: tuple | None = archive_with(service, url)
             if failed := (response is None):
                 logger.error(failure, url=url, service=service)
             else:
