@@ -27,7 +27,7 @@ from tqdm.auto import tqdm
 from typer import Argument, Option
 
 logging.basicConfig(
-    filename=f"{datetime.now(tz=UTC).date().isoformat()}",
+    filename=f"{datetime.now(tz=UTC).date().isoformat()}.log",
     level=logging.INFO,
 )
 
@@ -117,8 +117,14 @@ def main(
         for url, service in tqdm(product(urls, services), desc="Archiving URLs..."):
             typer.echo(f"Archiving {url} with {service}")
             response: tuple | None = archive_with(service, url)
+            timestamp: str = datetime.now(tz=UTC).isoformat()
             if failed := (response is None):
-                logger.error(failure, url=url, service=service)
+                logger.error(
+                    failure,
+                    url=url,
+                    service=service,
+                    timestamp=timestamp,
+                )
             else:
                 logger.info(
                     success,
@@ -126,6 +132,7 @@ def main(
                     service=service,
                     archive_url=response.archive_url,
                     response=response.response,
+                    timestamp=timestamp,
                 )
             print(  # noqa: T201
                 f"{failure if failed else success} ({service.name}): {url}"
@@ -138,11 +145,13 @@ def main(
                 failure,
                 url=url,
                 service=service,
+                timestamp=timestamp,
             ) if (response := archive_with(service, url)) is None else log_info(
                 success,
                 url=url,
                 service=service,
                 archive_url=response.archive_url,
+                timestamp=timestamp,
             )
 
 
