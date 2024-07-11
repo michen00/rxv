@@ -11,7 +11,6 @@ Example usage:
 
 __all__ = []
 
-import asyncio
 from itertools import product
 from sys import stdin
 from typing import Annotated, Optional
