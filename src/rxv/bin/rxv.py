@@ -11,6 +11,8 @@ Example usage:
 
 __all__ = []
 
+import logging
+from datetime import datetime
 from itertools import product
 from sys import stdin
 from typing import Annotated, Optional
@@ -23,6 +25,11 @@ from rxv.config import EXCLUDED_DOMAINS
 from rxv.core import SupportedServices, archive_with
 from tqdm.auto import tqdm
 from typer import Argument, Option
+
+logging.basicConfig(
+    filename=f"{datetime.datetime.now(tz=datetime.UTC).isoformat()}",
+    level=logging.INFO,
+)
 
 structlog.configure(
     processors=[
