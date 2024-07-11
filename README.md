@@ -38,6 +38,8 @@ print(result.response, result.archive_url)
 - `make uninstall`: uninstall the package.
 - `make clean`: clean the build files.
 
+Note: `pip install rxv` from PyPI installs a [different package](https://pypi.org/project/rxv/) for Yamaha RX receivers.
+
 ## TODO
 
 - idempotency
@@ -45,3 +47,4 @@ print(result.response, result.archive_url)
 - improve implementations (e2a for internetarchive?)
 - add tests
 - add more archival services
+- rename this package and migrate repos
