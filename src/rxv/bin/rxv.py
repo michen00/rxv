@@ -12,6 +12,7 @@ Example usage:
 __all__ = []
 
 import logging
+import random
 from datetime import UTC, datetime
 from itertools import product
 from sys import stdin
@@ -113,8 +114,12 @@ def main(
             services = [*SupportedServices]
 
     failure, success = "Failed to archive URL", "Archived URL"
+    urls_x_services: list[tuple] = random.sample(
+        __ := (*product(urls, services),),
+        len(__),
+    )
     if verbose:
-        for url, service in tqdm(product(urls, services), desc="Archiving URLs..."):
+        for url, service in tqdm(urls_x_services, desc="Archiving URLs..."):
             typer.echo(f"Archiving {url} with {service}")
             response: tuple | None = archive_with(service, url)
             timestamp: str = datetime.now(tz=UTC).isoformat()
@@ -140,7 +145,7 @@ def main(
             )
     else:  # this should be roughly equivalent to the verbose block
         log_error, log_info = logger.error, logger.info
-        for url, service in product(urls, services):
+        for url, service in urls_x_services:
             log_error(
                 failure,
                 url=url,
