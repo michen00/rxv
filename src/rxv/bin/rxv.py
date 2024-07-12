@@ -16,7 +16,8 @@ from datetime import UTC, datetime
 from itertools import product
 from random import shuffle
 from sys import stdin
-from typing import Annotated, Optional
+from time import sleep
+from typing import Annotated, Final, Optional
 from urllib.parse import urlparse
 
 import structlog
@@ -42,6 +43,9 @@ structlog.configure(
     cache_logger_on_first_use=True,
 )
 logger = structlog.get_logger()
+
+_ALWAYS_SLEEP: Final = 5
+"""The number of seconds to sleep between archiving URLs."""
 
 
 def main(
@@ -141,6 +145,7 @@ def main(
                 f"{failure if failed else success} ({service.name}): {url}"
                 f'{f" -> {response.archive_url}" if response else ""}',
             )
+            sleep(_ALWAYS_SLEEP)
     else:  # this should be roughly equivalent to the verbose block
         log_error, log_info = logger.error, logger.info
         for url, service in urls_x_services:
@@ -156,6 +161,7 @@ def main(
                 archive_url=response.archive_url,
                 timestamp=timestamp,
             )
+            sleep(_ALWAYS_SLEEP)
 
 
 def rxv() -> None:
