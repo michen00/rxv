@@ -3,6 +3,7 @@
 __all__ = "archive_with", "archive_with_archivetoday", "archive_with_internetarchive"
 
 from enum import StrEnum, auto
+from random import shuffle
 from secrets import token_hex
 from typing import Any, NamedTuple
 
@@ -21,7 +22,8 @@ class ArchiveToday(e2a.ArchiveToday):
     Adapted from https://github.com/caltechlibrary/eprints2archives/
         blob/main/eprints2archives/services/archivetoday.py (20240709 38437d3)
 
-    Modifies the save method to save the response and return the archival URL.
+    - Modifies the save method to save the response and return the archival URL.
+    - Modifies the _archive_host method to randomly select a host.
     """
 
     __slots__ = ("response",)
@@ -73,6 +75,36 @@ class ArchiveToday(e2a.ArchiveToday):
                 return str(h.headers["Location"])
 
         return None
+
+    def _archive_host(self) -> str | None:
+        hosts = e2a._HOSTS  # noqa: SLF001
+        shuffle(hosts)
+        for host in hosts:
+            response, error = e2a.net(
+                "get",
+                f"https://{host}/",
+                headers={"User-Agent": token_hex(6)},
+            )
+            if error:
+                if response.status_code == 503 and isinstance(
+                    error,
+                    e2a.ServiceFailure,
+                ):
+                    continue
+                raise error
+            archive_host = host
+            break
+        else:
+            return None
+
+        self._sid = (
+            str(response.content)
+            .split('name="submitid', 1)[1]
+            .split('value="', 1)[1]
+            .split('"', 1)[0]
+        )
+
+        return archive_host
 
 
 class ArchiveResponse(NamedTuple):
