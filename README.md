@@ -15,7 +15,7 @@ A tool for sending URLs to online archives
 
 ```terminal
 rxv https://example.com --archivetoday --internetarchive
-rxv https://example.com --at --it
+rxv https://example.com --at --ia
 rxv http://example1.com http://example2.com
 echo https://example.com | rxv
 ```
