@@ -142,7 +142,7 @@ def main(
                     timestamp=timestamp,
                 )
             print(  # noqa: T201
-                f"{failure if failed else success} ({service.name}): {url}"
+                f"{failure if failed else success} ({service.value}): {url}"
                 f'{f" -> {response.archive_url}" if response else ""}',
             )
             sleep(_ALWAYS_SLEEP)
