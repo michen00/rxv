@@ -12,9 +12,9 @@ Example usage:
 __all__ = []
 
 import logging
-import random
 from datetime import UTC, datetime
 from itertools import product
+from random import shuffle
 from sys import stdin
 from typing import Annotated, Optional
 from urllib.parse import urlparse
@@ -114,10 +114,8 @@ def main(
             services = [*SupportedServices]
 
     failure, success = "Failed to archive URL", "Archived URL"
-    urls_x_services: list[tuple] = random.sample(
-        __ := (*product(urls, services),),
-        len(__),
-    )
+    urls_x_services: list[tuple] = [*product(urls, services)]
+    shuffle(urls_x_services)
     if verbose:
         for url, service in tqdm(urls_x_services, desc="Archiving URLs..."):
             typer.echo(f"Archiving {url} with {service}")
