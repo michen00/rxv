@@ -48,7 +48,7 @@ _ALWAYS_SLEEP: Final = 5
 """The number of seconds to sleep between archiving URLs."""
 
 
-def main(
+def main(  # noqa: C901, PLR0912
     urls: Annotated[
         Optional[list[str]],  # noqa: UP007
         Argument(help="URLs to archive. If empty, reads from stdin."),
@@ -80,9 +80,12 @@ def main(
     ] = False,
 ) -> None:
     """Provide the entry point for the CLI."""
-    if not urls:
-        urls = {_url for url in stdin.readlines() if (_url := url.strip())}
-    if not urls:
+    urls_: set[str] = (
+        {_url for url in stdin.readlines() if (_url := url.strip())}
+        if urls is None
+        else {*urls}
+    )
+    if not urls_:
         msg = "No URLs provided."
         logger.error(msg)
         typer.echo(msg)
@@ -90,7 +93,7 @@ def main(
 
     _urls = set()
     include_url = _urls.add
-    for url in urls:
+    for url in urls_:
         if urlparse(url).netloc in EXCLUDED_DOMAINS:
             logger.warning("Excluded URL by domain", url=url)
             continue
@@ -100,7 +103,7 @@ def main(
             logger.warning("Invalid URL", url=url, exc_info=e)
             continue
         include_url(url)
-    urls = _urls
+    urls_ = _urls
 
     if not urls:
         logger.info("No valid URLs to archive")
