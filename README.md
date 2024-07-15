@@ -4,6 +4,8 @@ wip
 
 A tool for sending URLs to online archives
 
+Note: `pip install rxv` from PyPI installs a [different package](https://pypi.org/project/rxv/) for Yamaha RX receivers.
+
 ## Currently supported
 
 | service                                 | parameter           |
@@ -37,8 +39,6 @@ print(result.response, result.archive_url)
 - `make check`: run the test suite (requires installation with `make develop` rather than `make install`).
 - `make uninstall`: uninstall the package.
 - `make clean`: clean the build files.
-
-Note: `pip install rxv` from PyPI installs a [different package](https://pypi.org/project/rxv/) for Yamaha RX receivers.
 
 ## TODO
 
