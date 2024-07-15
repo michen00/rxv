@@ -80,12 +80,9 @@ def main(  # noqa: C901, PLR0912
     ] = False,
 ) -> None:
     """Provide the entry point for the CLI."""
-    urls_: set[str] = (
-        {_url for url in stdin.readlines() if (_url := url.strip())}
-        if urls is None
-        else {*urls}
-    )
-    if not urls_:
+    if not urls:
+        urls: set[str] = {_url for url in stdin.readlines() if (_url := url.strip())}
+    if not urls:
         msg = "No URLs provided."
         logger.error(msg)
         typer.echo(msg)
@@ -93,7 +90,7 @@ def main(  # noqa: C901, PLR0912
 
     _urls = set()
     include_url = _urls.add
-    for url in urls_:
+    for url in urls:
         if urlparse(url).netloc in EXCLUDED_DOMAINS:
             logger.warning("Excluded URL by domain", url=url)
             continue
@@ -103,7 +100,7 @@ def main(  # noqa: C901, PLR0912
             logger.warning("Invalid URL", url=url, exc_info=e)
             continue
         include_url(url)
-    urls_ = _urls
+    urls = _urls
 
     if not urls:
         logger.info("No valid URLs to archive")
