@@ -77,7 +77,7 @@ def main(
     verbose: Annotated[
         bool,
         Option("--verbose", "-v", help="enable verbose logging"),
-    ] = True,
+    ] = False,
 ) -> None:
     """Provide the entry point for the CLI."""
     if not urls:
