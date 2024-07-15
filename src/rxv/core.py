@@ -183,6 +183,6 @@ def archive_with_internetarchive(url: AnyHttpUrl, /) -> ArchiveResponse:
     Returns:
         ArchiveResponse: A tuple of the response and the archival URL.
     """
-    client = WaybackMachineSaveAPI(url, token_hex(6))
+    client = WaybackMachineSaveAPI(str(url), token_hex(6))
     archive_url = client.save()
-    return ArchiveResponse(client.response, archive_url)
+    return ArchiveResponse(client.response, AnyHttpUrl(archive_url))
