@@ -7,7 +7,7 @@ build: build-deps
 install: build
 	$(PIP) install dist/*.tar.gz
 
-develop:
+develop: upgrade-pip
 	$(PIP) install -e '.[dev]'
 	python -m mypy --install-types --non-interactive --package $(PKG) --follow-imports=skip > /dev/null 2>&1 || true
 
@@ -37,6 +37,8 @@ pull-prod:
 push-deps: build
 	@python -c 'import twine' > /dev/null 2>&1 || $(PIP) install twine
 
-build-deps:
-	@$(PIP) install --upgrade pip > /dev/null
+build-deps: upgrade-pip
 	@python -c 'import build' > /dev/null 2>&1 || $(PIP) install build
+
+upgrade-pip:
+	@$(PIP) install --upgrade pip > /dev/null
