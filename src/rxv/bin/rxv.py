@@ -120,11 +120,11 @@ def main(
     failure, success = "Failed to archive URL", "Archived URL"
     urls_x_services: list[tuple] = [*product(urls, services)]
     shuffle(urls_x_services)
+    timestamp: str = datetime.now(tz=UTC).isoformat()
     if verbose:
         for url, service in tqdm(urls_x_services, desc="Archiving URLs..."):
             typer.echo(f"Archiving {url} with {service}")
             response: tuple | None = archive_with(service, url)
-            timestamp: str = datetime.now(tz=UTC).isoformat()
             if failed := (response is None):
                 logger.error(
                     failure,
