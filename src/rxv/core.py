@@ -147,11 +147,16 @@ def archive_with(
             case SupportedServices.INTERNETARCHIVE:
                 return archive_with_internetarchive(url)
     except Exception as e:
+        exc_info = (
+            f"{exc_info[:max_len]}..."
+            if len(exc_info := str(e)) - (max_len := 128) > 3
+            else exc_info
+        )
         logger.exception(
             "Failed to obtain a response",
             url=url,
             service=service,
-            exc_info=e,
+            exc_info=exc_info,
             args=args,
             kwargs=kwargs,
         )
