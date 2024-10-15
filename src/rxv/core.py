@@ -86,12 +86,7 @@ class ArchiveToday(e2a.ArchiveToday):
                 headers={"User-Agent": token_hex(6)},
             )
             if error:
-                if response.status_code == 503 and isinstance(
-                    error,
-                    e2a.ServiceFailure,
-                ):
-                    continue
-                raise error
+                continue
             archive_host = host
             break
         else:
